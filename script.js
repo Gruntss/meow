@@ -4,71 +4,87 @@ const titleElement = document.querySelector(".title");
 const buttonsContainer = document.querySelector(".buttons");
 const yesButton = document.querySelector(".btn--yes");
 const noButton = document.querySelector(".btn--no");
-const catsImg = document.querySelector(".cats-img");
+const catImg = document.querySelector(".cat-img");
 
-const MAX_IMAGES = 9;
-
-let play = true;
+const MAX_IMAGES = 9; // Total images (cats-0.jpg to cats-8.jpg)
 let noCount = 0;
+
 const messages = [
-    "Really?",
-    "Pookie Please",
-    "I can't take this. 🙁",
-    "You're breaking my heart",
-    "Can't you change your mind?",
-    "How can we be sure if we don't try?",
-    "ako nalang sana",
-    "It hurts",
-    "Miss ganda, sige na"
+"Really?",
+"Pookie Please",
+"I can't take this. 🙁",
+"You're breaking my heart",
+"Can't you change your mind?",
+"How can we be sure if we don't try?",
+"ako nalang sana",
+"It hurts",
+"Miss ganda, sige na"",
 ];
 
 yesButton.addEventListener("click", handleYesClick);
-
-noButton.addEventListener("click", function () {
-    if (play) {
-        noCount++;
-        const imageIndex = Math.min(noCount, MAX_IMAGES);
-        changeImage(imageIndex);
-        resizeYesButton();
-        updateNoButtonText();
-
-        if (noCount === messages.length) { // Check if last message is displayed
-            noButton.textContent = "Yes, please!"; // Change no button to yes
-            noButton.removeEventListener("click", arguments.callee); // Remove current listener
-            noButton.addEventListener("click", handleYesClick); // Add yes click listener
-        }
-
-        if (noCount > messages.length && noCount <= MAX_IMAGES){
-            if (noCount === MAX_IMAGES) {
-                play = false;
-                titleElement.innerHTML = "Okay fine! :("; // Or whatever message you want
-                buttonsContainer.classList.add("hidden");
-            }
-        }
-
-    }
-});
+noButton.addEventListener("click", handleNoClick);
 
 function handleYesClick() {
-    titleElement.innerHTML = "Yayyy!! :3";
-    buttonsContainer.classList.add("hidden");
-    changeImage("yes");
+  titleElement.textContent = "Yayyy!! :3";
+  buttonsContainer.classList.add("hidden");
+  changeImage("yes"); // Show the final 'yes' image
+
+  // Show a cute response message
+  const responseMessage = document.createElement("p");
+  responseMessage.textContent = "❤️ Yay! I knew you would say yes! ❤️";
+  responseMessage.style.color = "red";
+  responseMessage.style.fontSize = "20px";
+  responseMessage.style.textAlign = "center";
+
+  document.body.appendChild(responseMessage);
 }
 
-function resizeYesButton() {
-    const computedStyle = window.getComputedStyle(yesButton);
-    const fontSize = parseFloat(computedStyle.getPropertyValue("font-size"));
-    const newFontSize = fontSize * 1.6;
+function handleNoClick() {
+  if (noCount < MAX_IMAGES) {
+    noCount++;
 
-    yesButton.style.fontSize = `${newFontSize}px`;
+    // Change the question text
+    titleElement.textContent = messages[Math.min(noCount, messages.length - 1)];
+
+    // Update the cat image
+    changeImage(noCount);
+
+    // Resize the buttons
+    resizeButtons();
+  }
+
+  // At the last "No" click, turn both into "Yes"
+  if (noCount === MAX_IMAGES) {
+    noButton.textContent = "Yes";
+    noButton.classList.add("btn--yes");
+    noButton.removeEventListener("click", handleNoClick);
+    noButton.addEventListener("click", handleYesClick);
+  }
 }
 
-function changeImage(image) {
-    catImg.src = `img/cat-${image}.jpg`;
+function resizeButtons() {
+  // Increase Yes button size
+  const yesFontSize = parseFloat(window.getComputedStyle(yesButton).fontSize);
+  yesButton.style.fontSize = `${yesFontSize * 1.4}px`;
+
+  // Decrease No button size (minimum 12px so it doesn’t disappear)
+  const noFontSize = parseFloat(window.getComputedStyle(noButton).fontSize);
+  noButton.style.fontSize = `${Math.max(noFontSize * 0.7, 12)}px`;
 }
 
-function updateNoButtonText() {
-    if (noCount < messages.length) {
-        noButton.innerHTML = messages[noCount % messages.length]; // Cycle through messages
-    }
+function changeImage(imageIndex) {
+  // Log the image path being used
+  const imagePath = `img/cats-${imageIndex}.jpg`;
+  console.log(`Changing image to: ${imagePath}`);
+
+  // Update the image source
+  catImg.src = imagePath;
+
+  // Handle image load and error events for better debugging
+  catImg.onload = () => {
+    console.log(`Image loaded: ${imagePath}`);
+  };
+  catImg.onerror = () => {
+    console.error(`Failed to load image: ${imagePath}`);
+  };
 }
