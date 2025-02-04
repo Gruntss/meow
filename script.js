@@ -4,7 +4,7 @@ const titleElement = document.querySelector(".title");
 const buttonsContainer = document.querySelector(".buttons");
 const yesButton = document.querySelector(".btn--yes");
 const noButton = document.querySelector(".btn--no");
-const catImg = document.querySelector(".cat-img");
+const catImg = document.querySelector(".cats-img");
 
 const MAX_IMAGES = 9; // Total images (cats-0.jpg to cats-8.jpg)
 let noCount = 0;
@@ -25,7 +25,7 @@ yesButton.addEventListener("click", handleYesClick);
 noButton.addEventListener("click", handleNoClick);
 
 function handleYesClick() {
-  titleElement.textContent = "Yayyy!! :3";
+  titleElement.textContent = "Yay!I knew you would say yes! :3";
   buttonsContainer.classList.add("hidden");
   changeImage("yes"); // Show the final 'yes' image
 
